@@ -15,7 +15,7 @@ class Standard implements \StandardInterface
     protected $table_id;
     protected $database;
 
-    public function __construct($table, $database, $id = '')
+    public function __construct($id, $table, $database)
     {
         $this->table = $table;
         $this->database = $database;
