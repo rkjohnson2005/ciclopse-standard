@@ -1,12 +1,12 @@
 <?php
 
 namespace CICLOPSE;
-require_once __DIR__ . '/../database.config';
 
 class Database
 {
     public function select($database, $sql, $values = array())
     {
+        include_once  __DIR__ . '/../database.config';
         $db_handle = new \PDO("mysql:host=" . $credentials[$database]['server'] . ";dbname=" . $database . ";charset=utf8", $credentials[$database]['user'], $credentials[$database]['password']);
         $query = $db_handle->prepare($sql);
         if (!$query) {
