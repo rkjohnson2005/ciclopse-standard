@@ -1,0 +1,7 @@
+<?php
+$credentials = [
+    'DATABASE' => '', //DATABASE NAME
+    'DATABSE_USER' => '', //DATABASE USER
+    'DATABASE_PASSWORD' => ''//DATABASE PASSWORD
+];
+?>
