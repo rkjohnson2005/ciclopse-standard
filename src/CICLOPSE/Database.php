@@ -1,7 +1,7 @@
 <?php
 
 namespace CICLOPSE;
-include '../database.config';
+require_once __DIR__ . '/../database.config';
 
 class Database
 {
