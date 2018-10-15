@@ -13,6 +13,7 @@ class Standard implements \StandardInterface
 {
     public function getLink($url, $display, $class = '')
     {
-        // TODO: Implement getLink() method.
+        $link = vsprintf("<a class='%s' href='%s'>%s</a>", [$class, $url, $display]);
+        return $link;
     }
 }
