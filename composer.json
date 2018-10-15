@@ -1,0 +1,21 @@
+{
+    "name": "rjohnson/ciclopse-standard",
+    "description": "CICLIPSE Standard Library",
+    "type": "library",
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "Richard Johnson",
+            "email": "development@rkjohn.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=7.0"
+    },
+    "autoload": {
+        "classmap": [
+            "src/"
+        ]
+    }
+}
