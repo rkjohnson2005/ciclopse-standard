@@ -6,8 +6,13 @@ class Database
 {
     public function select($database, $sql, $values = array())
     {
-        include_once  __DIR__ . '/../database.config';
-        $db_handle = new \PDO("mysql:host=" . $credentials[$database]['server'] . ";dbname=" . $database . ";charset=utf8", $credentials[$database]['user'], $credentials[$database]['password']);
+        include(__DIR__ . '/../config/database.config');
+        try {
+            $db_handle = new \PDO("mysql:host=" . $credentials[$database]['server'] . ";dbname=" . $database . ";charset=utf8", $credentials[$database]['user'], $credentials[$database]['password']);
+        } catch (\PDOException $exception) {
+            trigger_error($exception->getMessage(), E_WARNING );
+            exit();
+        }
         $query = $db_handle->prepare($sql);
         if (!$query) {
             trigger_error(print_r($db_handle->errorInfo(), true));
