@@ -4,7 +4,7 @@ namespace CICLOPSE;
 
 class Database extends Standard
 {
-    public function __construct($database, $sql, $values = array())
+    public static function select($database, $sql, $values = array())
     {
         try {
             $db_handle = new \PDO("mysql:host=" . DATABASE_CREDENTIALS[$database]['server'] . ";dbname=" . $database . ";charset=utf8", DATABASE_CREDENTIALS[$database]['user'], DATABASE_CREDENTIALS[$database]['password']);
@@ -25,6 +25,5 @@ class Database extends Standard
         $db_handle = null;
 
         return $result;
-
     }
 }
