@@ -2,13 +2,12 @@
 
 namespace CICLOPSE;
 
-class Database
+class Database extends Standard
 {
     public function select($database, $sql, $values = array())
     {
-        include(__DIR__ . '/../config/database.config');
         try {
-            $db_handle = new \PDO("mysql:host=" . $credentials[$database]['server'] . ";dbname=" . $database . ";charset=utf8", $credentials[$database]['user'], $credentials[$database]['password']);
+            $db_handle = new \PDO("mysql:host=" . $database_credentials[$database]['server'] . ";dbname=" . $database . ";charset=utf8", $database_credentials[$database]['user'], $database_credentials[$database]['password']);
         } catch (\PDOException $exception) {
             trigger_error($exception->getMessage(), E_WARNING );
             exit();

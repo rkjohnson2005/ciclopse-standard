@@ -1,0 +1,15 @@
+<?php
+const CICLOPSE_DATABASE = 'Rickzilla';
+
+$database_credentials = [
+    CICLOPSE_DATABASE => [ //DATABASE NAME
+        'server' => '', //DATABASE SERVER
+        'user' => '', //DATABASE USER
+        'password' => '' //DATABASE PASSWORD
+    ],
+    'OtherDatabase' => [ //DATABASE NAME
+        'server' => '', //DATABASE SERVER
+        'user' => '', //DATABASE USER
+        'password' => '' //DATABASE PASSWORD
+    ]
+];
