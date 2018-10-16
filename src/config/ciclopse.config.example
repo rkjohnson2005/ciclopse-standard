@@ -1,7 +1,7 @@
 <?php
 const CICLOPSE_DATABASE = 'Rickzilla';
 
-$database_credentials = [
+const DATABASE_CREDENTIALS = [
     CICLOPSE_DATABASE => [ //DATABASE NAME
         'server' => '', //DATABASE SERVER
         'user' => '', //DATABASE USER
