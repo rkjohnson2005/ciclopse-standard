@@ -16,4 +16,12 @@ class Standard implements \StandardInterface
         $link = vsprintf("<a class='%s' href='%s'>%s</a>", [$class, $url, $display]);
         return $link;
     }
+
+    public static function encode($object) {
+        return base64_encode(serialize($object));
+    }
+
+    public static function decode($object) {
+        return unserialize(base64_decode($object));
+    }
 }

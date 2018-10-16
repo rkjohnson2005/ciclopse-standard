@@ -26,4 +26,24 @@ class Database extends Standard
 
         return $result;
     }
+
+    public static function execute($database, $sql, $values = array())
+    {
+        try {
+            $db_handle = new \PDO("mysql:host=" . DATABASE_CREDENTIALS[$database]['server'] . ";dbname=" . $database . ";charset=utf8", DATABASE_CREDENTIALS[$database]['user'], DATABASE_CREDENTIALS[$database]['password']);
+        } catch (\PDOException $exception) {
+            trigger_error($exception->getMessage(), E_WARNING );
+            exit();
+        }
+        try {
+            $query = $db_handle->prepare($sql);
+            $query->execute($values);
+        } catch (\Exception $e) {
+            die("There's an error in the query");
+        }
+        $query = null;
+        $db_handle = null;
+
+        return TRUE;
+    }
 }
