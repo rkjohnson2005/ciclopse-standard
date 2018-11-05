@@ -41,7 +41,6 @@ class User extends Standard
     private $real_name;
     private $email;
     private $preferences;
-    private $group_id;
     private $last_login;
     private $password_reset;
     private $password_reset_time;
@@ -55,24 +54,28 @@ class User extends Standard
      * User constructor.
      * @param int $user_id
      */
-    public function __construct($user_id)
+    public function __construct($user_id = '')
     {
-        $user_information = \CICLOPSE\Database::select(CICLOPSE_DATABASE, "SELECT user_id, login_name, password, password_expires, real_name, email, preferences, group_id, last_login, password_reset, password_reset_time, last_update, last_update_user, created, deactivated, last_failed_login FROM user WHERE user_id = ? LIMIT 1;", [$user_id]);
-        $this->user_id = $user_information->user_id;
-        $this->login_name = $user_information->login_name;
-        $this->password = $user_information->password;
-        $this->password_expires = $user_information->password_expires;
-        $this->real_name = $user_information->real_name;
-        $this->email = $user_information->email;
-        $this->preferences = $user_information->preferences;
-        $this->last_login = $user_information->last_login;
-        $this->password_reset = $user_information->password_reset;
-        $this->password_reset_time = $user_information->password_reset_time;
-        $this->last_update = $user_information->last_update;
-        $this->last_update_user = $user_information->last_update_user;
-        $this->created = $user_information->created;
-        $this->deactivated = $user_information->deactivated;
-        $this->last_failed_login = $user_information->last_failed_login;
+        if ($user_id) {
+            $user_information = Database::select(CICLOPSE_DATABASE, "SELECT user_id, login_name, password, password_expires, real_name, email, preferences, last_login, password_reset, password_reset_time, last_update, last_update_user, created, deactivated, last_failed_login FROM user WHERE user_id = ? LIMIT 1;", [$user_id]);
+            $this->user_id = $user_information->user_id;
+            $this->login_name = $user_information->login_name;
+            $this->password = $user_information->password;
+            $this->password_expires = $user_information->password_expires;
+            $this->real_name = $user_information->real_name;
+            $this->email = $user_information->email;
+            $this->preferences = $user_information->preferences;
+            $this->last_login = $user_information->last_login;
+            $this->password_reset = $user_information->password_reset;
+            $this->password_reset_time = $user_information->password_reset_time;
+            $this->last_update = $user_information->last_update;
+            $this->last_update_user = $user_information->last_update_user;
+            $this->created = $user_information->created;
+            $this->deactivated = $user_information->deactivated;
+            $this->last_failed_login = $user_information->last_failed_login;
+
+            Session::set('CICLOPSEUser', $this::encode($this));
+        }
     }
 
     /**
@@ -120,7 +123,7 @@ class User extends Standard
      */
     public function setPassword($password)
     {
-        $this->password = crypt($password);
+        $this->password = password_hash($password, PASSWORD_DEFAULT);
     }
 
     /**
@@ -164,11 +167,16 @@ class User extends Standard
     }
 
     /**
-     * @param string $email
+     * @param $email
+     * @throws \Exception
      */
     public function setEmail($email)
     {
-        $this->email = $email;
+        if(filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $this->email = $email;
+        } else {
+            throw new \Exception('Not a valid email address.');
+        }
     }
 
     /**
@@ -176,31 +184,21 @@ class User extends Standard
      */
     public function getPreferences()
     {
-        return $this->preferences;
+        return $this::decode($this->preferences);
     }
 
+
     /**
-     * @param string $preferences
+     * @param $preferences
+     * @throws \Exception
      */
     public function setPreferences($preferences)
     {
-        $this->preferences = $preferences;
-    }
-
-    /**
-     * @return string
-     */
-    public function getGroupId()
-    {
-        return $this->group_id;
-    }
-
-    /**
-     * @param string $group_id
-     */
-    public function setGroupId($group_id)
-    {
-        $this->group_id = $group_id;
+        if (is_array($preferences)) {
+            $this->preferences = $this::encode($preferences);
+        } else {
+            throw new \Exception('Preferences must be an array.');
+        }
     }
 
     /**
@@ -331,30 +329,44 @@ class User extends Standard
         $this->last_failed_login = $last_failed_login;
     }
 
+    /**
+     *
+     */
     public function commit()
     {
         $session_user = self::decode($_SESSION['CICLOPSEUser']);
         if ($session_user->getUserId()) {
             if ($this->getUserId()) {
-                Database::execute(CICLOPSE_DATABASE, "UPDATE user SET login_name = ?, password = ?, password_expires = ?, real_name = ?, email = ?, preferences = ?, last_login = ?, password_reset = ?, password_reset_time = ?, last_update = NOW(), last_update_user = ?, created = ?, deactivated = ?, last_failed_login = ? LIMIT 1;", [$this->getLoginName(), $this->getPassword(), $this->getPasswordExpires(), $this->getRealName(), $this->getEmail(), $this->preferences, $this->getGroupId(), $this->getLastLogin(), $this->getPasswordReset(), $this->getPasswordResetTime(), $session_user->getUserId(), $this->getCreated(), $this->getDeactivated(), $this->getLastFailedLogin()]);
+                Database::execute(CICLOPSE_DATABASE, "UPDATE user SET login_name = ?, password = ?, password_expires = ?, real_name = ?, email = ?, preferences = ?, last_login = ?, password_reset = ?, password_reset_time = ?, last_update = NOW(), last_update_user = ?, created = ?, deactivated = ?, last_failed_login = ? WHERE user_id = ? LIMIT 1;", [$this->getLoginName(), $this->getPassword(), $this->getPasswordExpires(), $this->getRealName(), $this->getEmail(), $this->getPreferences(), $this->getLastLogin(), $this->getPasswordReset(), $this->getPasswordResetTime(), $session_user->getUserId(), $this->getCreated(), $this->getDeactivated(), $this->getLastFailedLogin(), $this->getUserId()]);
             } else {
-                Database::execute(CICLOPSE_DATABASE, "INSERT INTO user (login_name, password, password_expires, real_name, email, preferences, last_login, password_reset, password_reset_time, last_update, last_update_user, created, deactivated, last_failed_login) VALUES (?,?,?,?,?,?,?,?,?,NOW(),?,NOW(),?,?);", [$this->getLoginName(), $this->getPassword(), $this->getPasswordExpires(), $this->getRealName(), $this->getEmail(), $this->preferences, $this->getGroupId(), $this->getLastLogin(), $this->getPasswordReset(), $this->getPasswordResetTime(), $session_user->getUserId(), $this->getCreated(), $this->getDeactivated(), $this->getLastFailedLogin()]);
+                Database::execute(CICLOPSE_DATABASE, "INSERT INTO user (login_name, password, password_expires, real_name, email, preferences, last_login, password_reset, password_reset_time, last_update, last_update_user, created, deactivated, last_failed_login) VALUES (?,?,?,?,?,?,?,?,?,NOW(),?,?,?,?);", [$this->getLoginName(), $this->getPassword(), $this->getPasswordExpires(), $this->getRealName(), $this->getEmail(), $this->getPreferences(), $this->getLastLogin(), $this->getPasswordReset(), $this->getPasswordResetTime(), $session_user->getUserId(), $this->getCreated(), $this->getDeactivated(), $this->getLastFailedLogin()]);
             }
         }
     }
 
+    /**
+     * @param $user_name
+     * @param $password
+     * @return User
+     * @throws \Exception
+     */
     public static function authenticate($user_name, $password)
     {
-        $user_information = Database::select(CICLOPSE_DATABASE, "SELECT user_id FROM user WHERE login_name = ? LIMIT 1;",[$user_name]);
+        $user_information = Database::select(CICLOPSE_DATABASE, "SELECT user_id FROM user WHERE login_name = ? LIMIT 1;", [$user_name]);
         $user = new User($user_information->user_id);
-        if (crypt($password, $user->getPassword()) == $user->getPassword() && $user->getDeactivated() != 1) {
-            //$_SESSION['CICLOPSEUser'] = self::encode($user);
-            //$_SESSION['LoginTime'] = time();
+        if (password_verify($password, $user->getPassword()) && $user->getDeactivated() != 1) {
+            if(session_status() != PHP_SESSION_ACTIVE)
+            {
+                Session::init(new PhpSessionAdapter());
+            }
+
+            Session::set('CICLOPSEUser', self::encode($user));
+            Session::set('LoginTime', time());
+
             $user->setLastLogin(date('Y-m-d H:i:s', time()));
-            var_dump($user);
-            //$user->commit();
-            //header("Location: {$_SERVER['HTTP_REFERER']}");
-            die();
+            $user->commit();
+
+            return $user;
         } else {
             throw new \Exception("CICLOPSE EXCEPTION: Password not correct for given user\n");
         }
