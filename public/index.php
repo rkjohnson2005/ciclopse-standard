@@ -1,0 +1,2 @@
+<?php
+$smarty = new Smarty();

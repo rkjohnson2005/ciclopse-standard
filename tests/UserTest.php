@@ -17,6 +17,11 @@ class UserTest extends TestCase
     public function __construct()
     {
         parent::__construct();
+        $user_table_exists = count(\CICLOPSE\Database::select(CICLOPSE_DATABASE, "SHOW TABLES LIKE 'user'"));
+        if (!$user_table_exists) {
+            require_once(__DIR__ . '../database/User.php');
+            \CICLOPSE\Database::execute(CICLOPSE_DATABASE, $user_table);
+        }
         $this->test_user = new User();
     }
 
