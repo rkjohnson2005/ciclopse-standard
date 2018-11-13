@@ -1,0 +1,25 @@
+.navbar-custom .navbar-brand,
+.navbar-custom .navbar-text {
+    color: rgba(255,255,255,1);
+}
+
+.navbar .navbar-nav .nav-link {
+    color: rgba(255,255,255,1);
+    font-variant: small-caps;
+}
+
+.dropdown-header {
+    color: #404D6C;
+    background-color: #d7dce7;
+    padding: 0.5rem 0.5rem;
+}
+
+.dropdown-item {
+    font-size: .875rem;
+    padding: 0.15rem 0.75rem;
+}
+
+.dropdown-item:hover {
+    background-color: rgb(130, 140, 163);
+    color: white;
+}
