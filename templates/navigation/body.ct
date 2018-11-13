@@ -1,3 +1,3 @@
-{include file="Header.ct"}
+{include file="navigation/header.ct"}
 {$body}
-{include file="Footer.ct"}
+{include file="navigation/footer.ct"}
