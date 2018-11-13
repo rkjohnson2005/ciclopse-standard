@@ -1,0 +1,3 @@
+{include file="Header.ct"}
+{$body}
+{include file="Footer.ct"}
